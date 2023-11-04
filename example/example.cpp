@@ -1,5 +1,7 @@
 #define DLL_CLASS Example
 
+#include <http/EBHttpClient.hpp>
+
 #include <profilab.hpp>
 
 class DLL_CLASS : public Profilab
@@ -7,13 +9,12 @@ class DLL_CLASS : public Profilab
 public:
     Example()
     {
-        addInput("IN1");
-        addOutput("OUT1");
     }
 
     virtual void init()
     {
-
+        addInput("IN1");
+        addOutput("OUT1");
     };
 
     virtual void start()
@@ -23,7 +24,7 @@ public:
 
     virtual void update()
     {
-        
+        getOutput(0)->setValue(getInput(0)->getValue());
     };
 
     virtual void stop()
@@ -36,8 +37,13 @@ public:
 
     };
 
-private:
+    EB_SLOT(httpClientFinished)
+    {
 
+    }
+
+private:
+    
 };
 
 #include <profilabDll.hpp>
