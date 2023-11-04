@@ -1,7 +1,5 @@
 #define DLL_CLASS Example
 
-#include <http/EBHttpClient.hpp>
-
 #include <profilab.hpp>
 
 class DLL_CLASS : public Profilab
@@ -36,11 +34,6 @@ public:
     {
 
     };
-
-    EB_SLOT(httpClientFinished)
-    {
-
-    }
 
 private:
     
