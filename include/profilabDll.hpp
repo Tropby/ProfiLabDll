@@ -1,3 +1,4 @@
+#include <windows.h>
 
 #include <stdint.h>
 #include <EBObject.hpp>
@@ -5,51 +6,61 @@
 
 #include "profilab.hpp"
 
-#define START_ID 1000
+#define START_ID 99999
 
-inline std::map<int, EBObjectPointer<DLL_CLASS>> instances = std::map<int, EBObjectPointer<DLL_CLASS>>();
-inline int id = START_ID;
+std::map<int, EBObjectPointer<DLL_CLASS>> instances;
+int lastInstanceId = -1;
+
+int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
+{
+    return 1;
+}
+
 
 EBObjectPointer<DLL_CLASS> getInstance(double *puser)
 {
-    int i = puser[0];
+    int i = puser[100];
+
+    EBCpp::EBString instanceId = EBCpp::EBUtils::intToStr(i);
+    lastInstanceId = i;
+
     auto p = instances.find(i);
     if (p == instances.end())
     {
-        auto test = DLL_CLASS::createObject<DLL_CLASS>();
-        puser[0] = id;
-        instances.insert(std::pair(id++, test));
-        test->init();
-        return test;
+        auto dllInstance = DLL_CLASS::createObject<DLL_CLASS>();
+        instances.insert(std::pair(i, dllInstance));
+        dllInstance->setPUser(puser);
+        dllInstance->initFromDll();
+        return dllInstance;
     }
 
     auto res = p->second;
-
     return res;
 }
 
-DLL_EXPORT uint8_t NumInputs()
-{
-    double puser[1];
-    puser[0] = START_ID;
-    return getInstance(puser)->getInputCount();
-}
 //-----------------------------------------------------------------------------
 
 // ProfiLab reads the number of outputs
-DLL_EXPORT uint8_t NumOutputs()
+DLL_EXPORT uint8_t CNumOutputsEx(double *puser)
 {
-    double puser[1];
-    puser[0] = START_ID;
+    getInstance(puser)->setPUser(puser);
     return getInstance(puser)->getOutputCount();
 }
+
+// ProfiLab reads the number of inputs
+DLL_EXPORT uint8_t CNumInputsEx(double *puser)
+{
+    getInstance(puser)->setPUser(puser);
+    return getInstance(puser)->getInputCount();
+}
+
 //-----------------------------------------------------------------------------
 
 // ProfiLab reads the input names
 DLL_EXPORT void GetInputName(uint8_t channel, char *name)
 {
-    double puser[1];
-    puser[0] = START_ID;
+    double puser[101];
+    puser[100] = lastInstanceId;    
     auto port = getInstance(puser)->getInput(channel);
     if (port != nullptr)
     {
@@ -60,13 +71,14 @@ DLL_EXPORT void GetInputName(uint8_t channel, char *name)
         strcpy(name, "UNDEF_IN");
     }
 }
+
 //-----------------------------------------------------------------------------
 
 // ProfiLab reads the output names
 DLL_EXPORT void GetOutputName(uint8_t channel, char *name)
 {
-    double puser[1];
-    puser[0] = START_ID;
+    double puser[101];
+    puser[100] = lastInstanceId;
     auto port = getInstance(puser)->getOutput(channel);
     if (port != nullptr)
     {
@@ -103,6 +115,6 @@ DLL_EXPORT void CSimStop(double *pin, double *pout, double *puser)
 // ProfiLab configuration call
 DLL_EXPORT void CConfigure(double *puser)
 {
-    getInstance(puser)->configureFromDll(puser);
+    getInstance(puser)->configureFromDll(puser);    
 }
 //-----------------------------------------------------------------------------

@@ -89,13 +89,13 @@ public:
     }
 
     uint8_t getOutputCount()
-    {
+    {    
         return outputs.getSize();
     }
 
     EBObjectPointer<ProfilabPort> getInput(uint8_t channel)
     {
-        if (inputs.getSize() > channel)
+        if (channel < inputs.getSize())
             return inputs.get(channel);
         else
             return nullptr;
@@ -103,7 +103,7 @@ public:
 
     EBObjectPointer<ProfilabPort> getOutput(uint8_t channel)
     {
-        if (outputs.getSize() > channel)
+        if (channel < outputs.getSize())
             return outputs.get(channel);
         else
             return nullptr;
@@ -129,6 +129,11 @@ public:
     virtual void stop(){};
     virtual void configure(){};
 
+    void setPUser(double* puser)
+    {
+        this->puser = puser;
+    }
+
     void updateFromDll(double *pin, double *pout, double *puser)
     {
         this->puser = puser;
@@ -153,6 +158,7 @@ public:
     {
         this->puser = puser;
         configure();
+        initFromDll();
     }
 
     void startFromDll(double *pin, double *pout, double *puser)
@@ -179,6 +185,13 @@ public:
         stop();
     }
 
+    void initFromDll()
+    {
+        inputs.clear();
+        outputs.clear();
+        init();
+    }
+
 protected:
     void setConfigValue(int index, double value)
     {
@@ -189,6 +202,8 @@ protected:
     {
         return puser[index];
     }
+
+   
 
 private:
     bool inited;
