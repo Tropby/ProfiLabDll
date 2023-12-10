@@ -24,6 +24,11 @@ typedef struct
 class ProfilabPort : public EBObject<ProfilabPort>
 {
 public:
+    ProfilabPort() : string(""), value(0)
+    {
+
+    }
+
     void setPortName(EBString name)
     {
         this->name = name;
@@ -39,14 +44,25 @@ public:
         this->value = value;
     }
 
+    void setString(EBString value)
+    {
+        this->string = value;
+    }
+
     double getValue()
     {
         return value;
     }
 
+    EBString getString()
+    {
+        return string;
+    }
+
 private:
     double value;
     EBString name;
+    EBString string;
 };
 
 void pltestfunction(){
@@ -134,7 +150,7 @@ public:
         this->puser = puser;
     }
 
-    void updateFromDll(double *pin, double *pout, double *puser)
+    void updateFromDll(double *pin, double *pout, double *puser, char ** pstrings)
     {
         this->puser = puser;
         EBEventLoop::getInstance()->processEvents();
@@ -142,7 +158,9 @@ public:
         int i = 0;
         for (auto &in : inputs)
         {
-            in.get()->setValue(pin[i++]);
+            in.get()->setValue(pin[i]);
+            in.get()->setString(pstrings[i]);
+            i++;
         }
 
         update();
@@ -150,7 +168,9 @@ public:
         int o = 0;
         for (auto &out : outputs)
         {
-            pout[o++] = out.get()->getValue();
+            pout[o] = out.get()->getValue();
+            strcpy(pstrings[o], out.get()->getString().dataPtr());
+            o++;
         }
     }
 
@@ -198,12 +218,30 @@ protected:
         puser[index] = value;
     }
 
+    void setConfigValue(int index, int32_t value)
+    {
+        puser[index] = (double)value;
+    }
+
+    void setConfigValue(int index, uint32_t value)
+    {
+        puser[index] = (double)value;
+    }
+
     double getConfigValue(int index)
     {
         return puser[index];
     }
 
-   
+    int32_t getConfigValueInt32(int index)
+    {
+        return (int32_t)(puser[index]);
+    }
+
+    uint32_t getConfigValueUInt32(int index)
+    {
+        return (uint32_t)(puser[index]);
+    }
 
 private:
     bool inited;

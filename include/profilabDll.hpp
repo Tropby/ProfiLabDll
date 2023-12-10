@@ -99,9 +99,9 @@ DLL_EXPORT void CSimStart(double *pin, double *pout, double *puser)
 //-----------------------------------------------------------------------------
 
 // ProfiLab call for every simulation step
-DLL_EXPORT void CCalculate(double *pin, double *pout, double *puser)
+DLL_EXPORT void CCalculateEx(double *pin, double *pout, double *puser, char ** pstrings)
 {
-    getInstance(puser)->updateFromDll(pin, pout, puser);
+    getInstance(puser)->updateFromDll(pin, pout, puser, pstrings);
 }
 //-----------------------------------------------------------------------------
 
