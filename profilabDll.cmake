@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.5.0)
 
 # Configure and Include EBCpp
 set(EBCPP_USE_GUI Off)           # On/Off - Using the windows gui functions (only for testing)
