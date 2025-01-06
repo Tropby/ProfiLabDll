@@ -1,7 +1,36 @@
 # ProfiLabDll
 
-This repository provides functionalities to use EBCpp with Profilab.
-The reulting DLL file can be used in Profilab and perform some special actions.
+This library provides C++ bindings for Profilab. For event handling [EBCpp](https://github.com/Tropby/EBCpp) is used. The reulting DLL file can be used in Profilab and perform some special actions.
+
+![dll](res/dll.png)
+
+## DLL Functions
+
+The following C functions are exported to Profilab:
+
+* CNumInputsEx
+* CNumOutputsEx
+* GetInputName
+* GetOutputName
+* CSimStart
+* CSimStop
+* CCalculateEx
+* CConfigure
+
+![dll functions](res/dllfunctions.png)
+
+## Disclaimer
+
+The Software _ProfiLab-Expert 4.0_ is published and sold by Abacom. I do not have anything to do with this company. Alle hier verwendeten Markennamen, Warenzeichen und Produktbilder sind Eigentum Ihrer rechtmäßigen Eigentümer und dienen hier nur der Beschreibung.
+
+## Compiler
+
+Using [WinLibs](https://winlibs.com/) GCC compiler for windows (Win32). Otherwise the exported functions may not be named the right way.
+
+### Tested with this compiler
+
+[GCC 14.2.0 (with POSIX threads) + LLVM/Clang/LLD/LLDB 19.1.1 + MinGW-w64 12.0.0 UCRT - release 2](
+https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.1-12.0.0-ucrt-r2/winlibs-i686-posix-dwarf-gcc-14.2.0-llvm-19.1.1-mingw-w64ucrt-12.0.0-r2.zip)
 
 ## Example
 
@@ -11,6 +40,7 @@ This example will create an useless DLL. The output is always following the inpu
 #define DLL_CLASS Example
 #include <profilab.hpp>
 ```
+
 First of all we need to define the name of the DLL class. This definition is used by the Profilab header files to communicate with this class.
 After this the `profilab.hpp` file must be included.
 
@@ -59,9 +89,10 @@ Allways the class name should be `DLL_CLASS` as defined before.
 * stop => is called if the simulation is stoped
 * configure => is called if you click on configure in profilab.
 
-```
+```C++
 #include <profilabDll.hpp>
 ```
+
 It is very important that the `profilabDll.hpp` is included at the end of the file. Otherwise the DLL export functions are not working.
 
 ### CMake file
@@ -78,22 +109,3 @@ target_link_libraries(ProfiLabDllTest ${EBCPP_LIBS} -lWs2_32)
 
 target_compile_definitions(ProfiLabDllTest PRIVATE WIN_EXPORT)
 ```
-
-## Compiler
-
-The exported function names of the DLL are specific to the compiler and compiler flags. Therefore here are some hints:
-
-I am using https://winlibs.com/ compiler for windows (Win32).
-
-Otherwise the exported functions may not be named the right way.
-
-
-Profilab can not be used with Win64 DLL files!!!
-
-
-### Tested with the following compiler
-
- GCC 14.2.0 (with POSIX threads) + LLVM/Clang/LLD/LLDB 19.1.1 + MinGW-w64 12.0.0 UCRT - release 2
- https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.1-12.0.0-ucrt-r2/winlibs-i686-posix-dwarf-gcc-14.2.0-llvm-19.1.1-mingw-w64ucrt-12.0.0-r2.zip
-
-
