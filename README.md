@@ -21,7 +21,7 @@ The following C functions are exported to Profilab:
 
 ## Disclaimer
 
-The Software _ProfiLab-Expert 4.0_ is published and sold by Abacom. I do not have anything to do with this company. Alle hier verwendeten Markennamen, Warenzeichen und Produktbilder sind Eigentum Ihrer rechtmäßigen Eigentümer und dienen hier nur der Beschreibung.
+The Software _ProfiLab-Expert 4.0_ is published and sold by Abacom. I do not have anything to do with this company. All brand names, trademarks and product images used here are the property of their respective owners and are used for descriptive purposes only.
 
 ## Compiler
 
